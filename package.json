@@ -9,7 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "mermaid": "^11.12.2",
     "next": "16.1.0",
+    "openai": "^6.14.0",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
