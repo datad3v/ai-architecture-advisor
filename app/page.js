@@ -33,25 +33,37 @@ export default function Home() {
     }
   }
 
-  return (
-    <main className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">AI Architecture Advisor</h1>
+    return (
+        <main className="p-6">
+            <div className="max-w-3xl mx-auto">
+                <header className="mb-8">
+                    <h1 className="text-3xl font-bold mb-2">
+                    AI Architecture Advisor
+                    </h1>
+                    <p className="text-slate-600">
+                    Translate business requirements into cloud architecture recommendations
+                    </p>
+                </header>
 
-      <IntakeForm onSubmit={handleGenerate} />
+            <section className="bg-white p-6 rounded-lg shadow-sm border mb-6">
+                <IntakeForm onSubmit={handleGenerate} />
+            </section>
 
-      {loading && (
-        <p className="mt-4 text-gray-500">Generating architecture recommendation…</p>
-      )}
+            {loading && (
+                <p className="text-slate-500">Generating architecture…</p>
+            )}
 
-      {error && (
-        <p className="mt-4 text-red-600">{error}</p>
-      )}
+            {error && (
+                <p className="text-red-600">{error}</p>
+            )}
 
-      {result && (
-        <div className="mt-6 p-4 border rounded bg-gray-50 whitespace-pre-wrap">
-          {result}
-        </div>
-      )}
-    </main>
-  );
+            {result && (
+                <section className="bg-white p-6 rounded-lg shadow-sm border mt-6 whitespace-pre-wrap">
+                    {result}
+                </section>
+            )}
+            </div>
+        </main>
+    );
+
 }
