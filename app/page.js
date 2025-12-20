@@ -5,7 +5,7 @@ import IntakeForm from '../components/IntakeForm';
 import MermaidDiagram from '../components/MermaidDiagram';
 
 /**
- * Extracts a ```mermaid``` code block from AI output
+ * Extracts a ```mermaid``` block from AI output
  */
 function extractMermaid(text) {
   const match = text.match(/```mermaid([\s\S]*?)```/);
@@ -13,7 +13,7 @@ function extractMermaid(text) {
 }
 
 /**
- * Removes the mermaid block from the text so it doesn't render twice
+ * Removes the mermaid block so it doesn’t render twice
  */
 function stripMermaid(text) {
   return text.replace(/```mermaid[\s\S]*?```/, '').trim();
@@ -53,41 +53,49 @@ export default function Home() {
   const textOutput = result ? stripMermaid(result) : null;
 
   return (
-    <main className="p-6">
-      <div className="max-w-3xl mx-auto">
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">
-            AI Architecture Advisor
+    <main className="min-h-screen flex items-start justify-center bg-slate-50 px-4 py-12">
+      <div className="w-full max-w-4xl">
+        {/* Header / Hero */}
+        <header className="mb-12 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+            AI Architecture Advisor is Live
           </h1>
-          <p className="text-slate-600">
+          <p className="text-slate-600 max-w-xl mx-auto text-base md:text-lg">
             Translate business requirements into cloud architecture recommendations
           </p>
         </header>
 
-        <section className="bg-white p-6 rounded-lg shadow-sm border mb-6">
+        {/* Intake Form */}
+        <section className="bg-white p-8 md:p-10 rounded-2xl shadow-sm border border-slate-200 mb-12">
           <IntakeForm onSubmit={handleGenerate} />
         </section>
 
+        {/* Status */}
         {loading && (
-          <p className="text-slate-500">Generating architecture…</p>
+          <p className="text-slate-500 text-center">
+            Generating architecture…
+          </p>
         )}
 
         {error && (
-          <p className="text-red-600">{error}</p>
+          <p className="text-red-600 text-center">
+            {error}
+          </p>
         )}
 
+        {/* Results */}
         {result && (
-          <section className="bg-white p-6 rounded-lg shadow-sm border mt-6">
+          <section className="bg-white p-8 md:p-10 rounded-2xl shadow-md border border-slate-200 transition-all">
             {mermaidCode && (
-              <div className="mb-6">
-                <h2 className="font-semibold mb-2">
+              <div className="mb-10 border-b border-slate-200 pb-8">
+                <h2 className="text-xl md:text-2xl font-semibold mb-4">
                   Architecture Diagram
                 </h2>
                 <MermaidDiagram code={mermaidCode} />
               </div>
             )}
 
-            <div className="whitespace-pre-wrap text-sm text-slate-800">
+            <div className="whitespace-pre-wrap text-sm md:text-base text-slate-800 leading-relaxed">
               {textOutput}
             </div>
           </section>
@@ -96,4 +104,3 @@ export default function Home() {
     </main>
   );
 }
-
