@@ -1,37 +1,62 @@
 import OpenAI from 'openai';
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 export async function POST(req) {
-  const body = await req.json();
+  try {
+    const body = await req.json();
 
-  const prompt = `
+    const prompt = `
 You are a senior cloud solutions architect.
+Based on the following requirements, provide:
+- Architecture overview
+- Pros & cons
+- Cost considerations
+- Security considerations
+- A Mermaid diagram
 
-Based on the following intake, generate:
-1. High-level architecture overview
-2. Core components
-3. Security and data considerations
-4. Scalability and cost tradeoffs
-
-Intake:
-Industry: ${body.industry}
-Data Sensitivity: ${body.dataSensitivity}
-Users: ${body.users}
-Goal: ${body.goal}
-Cloud: ${body.cloud}
-
-Respond in clear markdown.
+Requirements:
+${JSON.stringify(body, null, 2)}
 `;
 
-  const completion = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [{ role: 'user', content: prompt }]
-  });
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: prompt }],
+    });
 
-  return Response.json({
-    output: completion.choices[0].message.content
-  });
+    return Response.json({
+      output: completion.choices[0].message.content,
+    });
+
+  } catch (error) {
+    console.error('OpenAI error:', error);
+
+    // Default error response
+    let status = 500;
+    let errorType = 'UNKNOWN_ERROR';
+    let message = 'An unexpected error occurred. Please try again later.';
+
+    // Handle known OpenAI errors
+    if (error.status === 429) {
+      status = 429;
+      errorType = 'QUOTA_EXCEEDED';
+      message =
+        'AI usage limit reached. Please try again later.';
+    }
+
+    if (error.status === 401) {
+      status = 401;
+      errorType = 'AUTH_ERROR';
+      message =
+        'AI service configuration error. Please contact the site owner.';
+    }
+
+    return Response.json(
+      { errorType, message },
+      { status }
+    );
+  }
 }
+

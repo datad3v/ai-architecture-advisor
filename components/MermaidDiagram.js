@@ -1,15 +1,26 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import mermaid from 'mermaid';
 
 export default function MermaidDiagram({ code }) {
   const ref = useRef(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    mermaid.initialize({ startOnLoad: false, theme: 'default' });
+    setMounted(true);
+  }, []);
 
-    if (ref.current) {
+  useEffect(() => {
+    if (!mounted || !ref.current || !code) return;
+
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'default',
+      securityLevel: 'loose',
+    });
+
+    try {
       mermaid.render(
         'mermaid-diagram',
         code,
@@ -17,8 +28,18 @@ export default function MermaidDiagram({ code }) {
           ref.current.innerHTML = svg;
         }
       );
+    } catch (err) {
+      console.error('Mermaid render error:', err);
     }
-  }, [code]);
+  }, [mounted, code]);
 
-  return <div ref={ref} className="overflow-x-auto" />;
+  if (!mounted) return null;
+
+  return (
+    <div
+      ref={ref}
+      className="overflow-x-auto rounded-lg border border-slate-200 bg-white p-4"
+    />
+  );
 }
+
